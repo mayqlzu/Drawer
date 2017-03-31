@@ -3,11 +3,9 @@ package com.mayqlzu.android.customview.drawer;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Scroller;
 
 /**
  * Created by mayq on 2017/3/30.
@@ -22,48 +20,12 @@ public class Drawer extends ViewGroup {
     private View handle;
     private View content;
 
-    private int gap = 0;
+    private int gap = 0; // how many content can be seen
     private int gapDown = 0;
     private float rawYDown = 0;// relative to screen
-    private Scroller scroller;
-    //private Cache cache = new Cache();
-    private GestureDetector gestureDetector;
-
-    private static class Cache {
-        private float[] arr = new float[3];
-
-        public void put(float val) {
-            float[] arr2 = new float[3];
-            arr2[0] = arr[1];
-            arr2[1] = arr[2];
-            arr2[2] = val;
-            arr = arr2;
-        }
-
-        public float getDiff() {
-            if (0 != arr[2]) {
-                return arr[2] - arr[0];
-            } else {
-                return 0;
-            }
-        }
-
-        public void clear() {
-            arr = new float[3];
-        }
-    }
 
     public Drawer(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-                return false;
-            }
-        });
-        scroller = new Scroller(context);
     }
 
     @Override
@@ -107,6 +69,7 @@ public class Drawer extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        // layout as vertical LinearLayout
         handle.layout(0, 0, handle.getMeasuredWidth(), handle.getMeasuredHeight());
         content.layout(0, handle.getMeasuredHeight(),
                 handle.getMeasuredWidth(),
@@ -135,8 +98,6 @@ public class Drawer extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        gestureDetector.onTouchEvent(event);
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 rawYDown = event.getRawY();
@@ -149,12 +110,8 @@ public class Drawer extends ViewGroup {
                 gap = Math.max(gap, 0);
                 gap = Math.min(gap, content.getHeight());
                 requestLayout();
-                //cache.put(event.getRawY());
                 return true;
             case MotionEvent.ACTION_UP:
-                //cache.put(event.getRawY());
-                //boolean isUp = isUp();
-                //cache.clear();
                 onFingerReleased();
                 break;
             default:
@@ -164,36 +121,7 @@ public class Drawer extends ViewGroup {
         return false;
     }
 
-    /*
-    private boolean isUp() {
-        return cache.getDiff() < 0;
-    }
-    */
-
     private void onFingerReleased() {
-        scroller.forceFinished(true);
-
-        /*
-        if (Math.abs(velocity) > 100) {
-            //public void fling(int startX, int startY, int velocityX, int velocityY,
-            //int minX, int maxX, int minY, int maxY) {
-            scroller.fling(0, gap, 0, (int) velocity,
-                    0, 0, 0, gap);
-        } else {
-            playSlowAnimation();
-        }
-        */
-    }
-
-    @Override
-    public void computeScroll() {
-        scroller.computeScrollOffset();
-        int y = scroller.getCurrY();
-        gap = y;
-        requestLayout();
-    }
-
-    private void playSlowAnimation() {
         int endVal;
         if (gap > content.getHeight() / 3) {
             endVal = content.getHeight();
@@ -215,4 +143,5 @@ public class Drawer extends ViewGroup {
             }
         });
     }
+
 }
