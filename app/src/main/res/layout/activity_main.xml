@@ -22,7 +22,7 @@
             android:layout_height="40dp"
             android:background="@android:color/holo_red_light"
             android:gravity="center"
-            android:text="handle" />
+            android:text="handle(click or move me)" />
 
         <TextView
             android:layout_width="match_parent"
