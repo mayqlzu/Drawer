@@ -44,34 +44,12 @@ public class Drawer extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        //protected void measureChild(View child, int parentWidthMeasureSpec,
+        //                            int parentHeightMeasureSpec) {
+        measureChild(handle, widthMeasureSpec, heightMeasureSpec);
+        measureChild(content, widthMeasureSpec, heightMeasureSpec);
 
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
-        // handle
-        int spec;
-        // match_parent and wrap_content are all negative constant
-        if (handle.getLayoutParams().height >= 0) {
-            spec = MeasureSpec.makeMeasureSpec(
-                    handle.getLayoutParams().height, MeasureSpec.EXACTLY);
-        } else {
-            spec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-        }
-        handle.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY)
-                , spec);
-
-        // contentView
-        if (content.getLayoutParams().height >= 0) {
-            spec = MeasureSpec.makeMeasureSpec(
-                    content.getLayoutParams().height, MeasureSpec.EXACTLY);
-        } else {
-            spec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-        }
-        content.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY), spec);
-
-        setMeasuredDimension(widthSize, handle.getMeasuredHeight() + gap);
+        setMeasuredDimension(handle.getMeasuredWidth(), handle.getMeasuredHeight() + gap);
     }
 
     @Override
